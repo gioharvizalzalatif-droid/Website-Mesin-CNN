@@ -1,0 +1,782 @@
+<?php 
+$pageTitle = "CNC Cutting Fiber Laser GEN 1 - PT CNC Indonesia";
+include 'header.php'; 
+?>
+
+<style>
+    /* Product Detail Styles */
+    .product-detail {
+        padding: 2rem 0;
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        min-height: 100vh;
+    }
+
+    .product-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
+    /* Back Button */
+    .back-button {
+        margin-bottom: 2rem;
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: white;
+        color: var(--primary);
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border: 2px solid transparent;
+    }
+
+    .btn-back:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        border-color: var(--primary);
+    }
+
+    /* Product Header */
+    .product-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+
+    .product-header h1 {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--primary), var(--dark));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .product-header .subtitle {
+        font-size: 1.2rem;
+        color: var(--secondary);
+        font-weight: 600;
+    }
+
+    /* Product Main Content */
+    .product-main {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        margin-bottom: 3rem;
+    }
+
+    /* Product Images */
+    .product-images {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .main-image {
+        width: 100%;
+        height: 400px;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        position: relative;
+        cursor: pointer;
+    }
+
+    .main-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .main-image:hover img {
+        transform: scale(1.05);
+    }
+
+    .thumbnail-gallery {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.8rem;
+    }
+
+    .thumbnail {
+        width: 100%;
+        height: 100px;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        position: relative;
+    }
+
+    .thumbnail.active {
+        border-color: var(--secondary);
+        box-shadow: 0 5px 15px rgba(45, 116, 218, 0.3);
+    }
+
+    .thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .thumbnail:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Product Info */
+    .product-info {
+        padding: 1rem;
+    }
+
+    .product-type {
+        background: linear-gradient(135deg, var(--secondary), var(--gold));
+        color: white;
+        padding: 0.5rem 1.5rem;
+        border-radius: 25px;
+        display: inline-block;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        box-shadow: 0 5px 15px rgba(45, 116, 218, 0.3);
+    }
+
+    .product-description {
+        margin-bottom: 2rem;
+        line-height: 1.7;
+        color: var(--dark);
+        font-size: 1.1rem;
+    }
+
+    /* Product Basic Info */
+    .product-basic-info {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+        border-left: 4px solid var(--gold);
+    }
+
+    .product-basic-info h3 {
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        font-size: 1.4rem;
+        font-weight: 700;
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+
+    .product-basic-info h3::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(to right, var(--secondary), var(--gold));
+        border-radius: 2px;
+    }
+
+    .basic-info-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .basic-info-list li {
+        padding: 0.8rem 0;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .basic-info-list li:last-child {
+        border-bottom: none;
+    }
+
+    .info-name {
+        font-weight: 600;
+        color: var(--dark);
+        flex: 1;
+    }
+
+    .info-value {
+        color: var(--secondary);
+        font-weight: 500;
+        flex: 2;
+        text-align: right;
+    }
+
+    .specifications {
+        
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+        border-left: 4px solid var(--secondary);
+    }
+
+    .specifications h3 {
+        color: var(--primary);
+        margin-bottom: 1.5rem;
+        font-size: 1.4rem;
+        font-weight: 700;
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+
+    .specifications h3::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(to right, var(--secondary), var(--gold));
+        border-radius: 2px;
+    }
+
+    .spec-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .spec-list li {
+        padding: 0.8rem 0;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .spec-list li:last-child {
+        border-bottom: none;
+    }
+
+    .spec-list li::before {
+        content: '✓';
+        color: var(--gold);
+        font-weight: bold;
+        font-size: 1.1rem;
+        margin-top: 0.1rem;
+    }
+
+    .spec-text {
+        color: var(--dark);
+        font-weight: 500;
+        line-height: 1.5;
+    }
+
+    .product-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-contact {
+        background: linear-gradient(135deg, var(--secondary), var(--gold));
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 5px 15px rgba(45, 116, 218, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative;
+        overflow: hidden;
+        flex: 1;
+        min-width: 200px;
+        justify-content: center;
+    }
+
+    .btn-contact::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--gold), var(--secondary));
+        transition: all 0.4s ease;
+        z-index: -1;
+    }
+
+    .btn-contact:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(45, 116, 218, 0.4);
+    }
+
+    .btn-contact:hover::before {
+        left: 0;
+    }
+
+    .btn-brochure {
+        background: white;
+        border: 2px solid var(--secondary);
+        color: var(--secondary);
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 1;
+        min-width: 200px;
+        justify-content: center;
+    }
+
+    .btn-brochure:hover {
+        background: var(--secondary);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(45, 116, 218, 0.3);
+    }
+
+    /* Related Products */
+    .related-products {
+        margin-top: 4rem;
+        padding-top: 3rem;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .related-products h2 {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: var(--primary);
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+
+    .related-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+    }
+
+    .related-item {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s ease;
+        position: relative;
+    }
+
+    .related-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    .related-image {
+        height: 180px;
+        overflow: hidden;
+    }
+
+    .related-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .related-item:hover .related-image img {
+        transform: scale(1.1);
+    }
+
+    .related-content {
+        padding: 1.2rem;
+        text-align: center;
+    }
+
+    .related-content h3 {
+        font-size: 1.1rem;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .related-content .model {
+        color: var(--secondary);
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin-bottom: 1rem;
+    }
+
+    .related-link {
+        display: inline-block;
+        color: var(--gold);
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+    }
+
+    .related-link:hover {
+        color: var(--secondary);
+        transform: translateX(5px);
+    }
+
+    /* Modal for Image View */
+    .image-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .image-modal.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .modal-content {
+        max-width: 90%;
+        max-height: 90%;
+        position: relative;
+    }
+
+    .modal-content img {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .close-modal {
+        position: absolute;
+        top: -40px;
+        right: 0;
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+        background: none;
+        border: none;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .product-main {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        .related-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .thumbnail-gallery {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .product-header h1 {
+            font-size: 2rem;
+        }
+        
+        .thumbnail-gallery {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .product-actions {
+            flex-direction: column;
+        }
+        
+        .btn-contact, .btn-brochure {
+            width: 100%;
+            justify-content: center;
+        }
+        
+        .related-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .basic-info-list li {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.3rem;
+        }
+        
+        .info-value {
+            text-align: left;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .product-header h1 {
+            font-size: 1.8rem;
+        }
+        
+        .product-header .subtitle {
+            font-size: 1rem;
+        }
+        
+        .main-image {
+            height: 300px;
+        }
+        
+        .specifications, .product-basic-info {
+            padding: 1rem;
+        }
+        
+        .thumbnail-gallery {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+
+<!-- Product Detail Section -->
+<section class="product-detail">
+    <div class="product-container">
+        <!-- Back Button -->
+        <div class="back-button">
+            <a href="products.php" class="btn-back">
+                <i class="fas fa-arrow-left"></i> Katalog Produk
+            </a>
+        </div>
+
+        <!-- Product Header -->
+        <div class="product-header">
+            <h1>CNC CUTTING FIBER LASER GEN 1</h1>
+            <div class="subtitle">Mesin Fiber Laser Cutting dengan teknologi terbaru untuk pemotongan metal presisi tinggi</div>
+        </div>
+
+        <!-- Product Main Content -->
+        <div class="product-main">
+            <!-- Product Images -->
+            <div class="product-images">
+                <div class="main-image">
+                    <img id="mainImage" src="foto/cnc-cutting-fiber-laser-gen1a.JPG" alt="CNC Cutting Fiber Laser GEN 1">
+                </div>
+                <div class="thumbnail-gallery">
+                    <div class="thumbnail active" data-image="foto/cnc-cutting-fiber-laser-gen1a.JPG">
+                        <img src="foto/cnc-cutting-fiber-laser-gen1a.JPG" alt="CNC Cutting Fiber Laser GEN 1 - Tampilan Utama">
+                    </div>
+                    <div class="thumbnail" data-image="foto/cnc-cutting-fiber-laser-gen1-m1.JPG">
+                        <img src="foto/cnc-cutting-fiber-laser-gen1-m1.JPG" alt="CNC Cutting Fiber Laser GEN 1 - Detail 1">
+                    </div>
+                    <div class="thumbnail" data-image="foto/cnc-cutting-fiber-laser-gen1-m2.JPG">
+                        <img src="foto/cnc-cutting-fiber-laser-gen1-m2.JPG" alt="CNC Cutting Fiber Laser GEN 1 - Detail 2">
+                    </div>
+                    <div class="thumbnail" data-image="foto/cnc-cutting-fiber-laser-gen1-m3.JPG">
+                        <img src="foto/cnc-cutting-fiber-laser-gen1-m3.JPG" alt="CNC Cutting Fiber Laser GEN 1 - Detail 3">
+                    </div>
+                    <div class="thumbnail" data-image="foto/cnc-cutting-fiber-laser-gen1-m4.JPG">
+                        <img src="foto/cnc-cutting-fiber-laser-gen1-m4.JPG" alt="CNC Cutting Fiber Laser GEN 1 - Detail 4">
+                    </div>
+                </div>
+            </div>
+            
+
+            <!-- Product Info -->
+            <div class="product-info">
+                <div class="product-type">MESIN CNC FIBER LASER CUTTING</div>
+                
+                <div class="product-description">
+                    <p>Mesin yang berfungsi untuk proses pemotongan sheet metal dengan berbagai motif. Mesin ini menggunakan kombinasi sistem komputerisasi dengan hi-tech laser fiber yang merupakan teknologi terbaru untuk pemotongan metal saat ini. Mesin ini mampu memotong material dengan high speed cutting dan presisi tinggi.</p>
+                </div>
+
+                <!-- Product Basic Information -->
+                <div class="product-basic-info">
+                    <h3>Informasi Produk</h3>
+                    <ul class="basic-info-list">
+                        <li>
+                            <span class="info-name">Tipe Produk</span>
+                            <span class="info-value">FL-C1000 GEN 1</span>
+                        </li>
+                        <li>
+                            <span class="info-name">Tahun Produksi</span>
+                            <span class="info-value">2019</span>
+                        </li>
+                        <li>
+                            <span class="info-name">Material Potong</span>
+                            <span class="info-value">All Metal</span>
+                        </li>
+                        <li>
+                            <span class="info-name">Kategori</span>
+                            <span class="info-value">Mesin CNC Fiber Laser Cutting</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Specifications -->
+                <div class="specifications">
+                    <h3>Spesifikasi Teknis</h3>
+                    <ul class="spec-list">
+                        <li>
+                            <span class="spec-text">Raycus Laser Source 1000 Watt</span>
+                        </li>
+                        <li>
+                            <span class="spec-text">Raytools Head BT 240S (Upgradable Up TO 3000W)</span>
+                        </li>
+                        <li>
+                            <span class="spec-text">FS CUT 1000S Controller</span>
+                        </li>
+                        <li>
+                            <span class="spec-text">Panasonic Japan Servo Motor 750W</span>
+                        </li>
+                        <li>
+                            <span class="spec-text">Capacitive Sensor Material (BCS100)</span>
+                        </li>
+                        <li>
+                            <span class="spec-text">Solid Frame by Machining Process</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="product-actions">
+                    <a href="contact.php" class="btn-contact">
+                        <i class="fas fa-phone-alt"></i> Konsultasi Produk
+                    </a>
+                    <a href="brochure.pdf" class="btn-brochure">
+                        <i class="fas fa-download"></i> Download Brosur
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <div class="related-products">
+            <h2>Produk Terkait</h2>
+            <div class="related-grid">
+                <div class="related-item">
+                    <div class="related-image">
+                        <img src="foto/cnc-cutting-fiber-laser-gen1a.JPG" alt="CNC Fiber Laser Cutting">
+                    </div>
+                    <div class="related-content">
+                        <h3>CNC Fiber Laser Cutting</h3>
+                        <div class="model">Model: FL-C1500 GEN</div>
+                        <a href="product-detail.php?id=1" class="related-link">Lihat Detail →</a>
+                    </div>
+                </div>
+                <div class="related-item">
+                    <div class="related-image">
+                        <img src="foto/cnc-plasma-cutting-gen1a.JPG" alt="CNC Plasma Cutting">
+                    </div>
+                    <div class="related-content">
+                        <h3>CNC Plasma Cutting</h3>
+                        <div class="model">Model: PC-2015</div>
+                        <a href="product-detail.php?id=2" class="related-link">Lihat Detail →</a>
+                    </div>
+                </div>
+                <div class="related-item">
+                    <div class="related-image">
+                        <img src="foto/cnc-router-R-1325.JPG" alt="CNC Router">
+                    </div>
+                    <div class="related-content">
+                        <h3>CNC Router</h3>
+                        <div class="model">Model: R-1325</div>
+                        <a href="product-detail.php?id=3" class="related-link">Lihat Detail →</a>
+                    </div>
+                </div>
+                <div class="related-item">
+                    <div class="related-image">
+                        <img src="foto/cnc-rotary-plasma-cutting.JPG" alt="CNC Plano Milling">
+                    </div>
+                    <div class="related-content">
+                        <h3>CNC Plano Milling</h3>
+                        <div class="model">Model: PM-3000</div>
+                        <a href="product-detail.php?id=5" class="related-link">Lihat Detail →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Image Modal -->
+<div class="image-modal" id="imageModal">
+    <button class="close-modal" id="closeModal">&times;</button>
+    <div class="modal-content">
+        <img id="modalImage" src="" alt="">
+    </div>
+</div>
+
+<script>
+    // Thumbnail Gallery Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const mainImage = document.getElementById('mainImage');
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const closeModal = document.getElementById('closeModal');
+        
+        // Thumbnail click event
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', function() {
+                const imageSrc = this.getAttribute('data-image');
+                mainImage.src = imageSrc;
+                
+                // Update active thumbnail
+                thumbnails.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // Main image click to open modal
+        mainImage.addEventListener('click', function() {
+            modalImage.src = this.src;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        // Close modal
+        closeModal.addEventListener('click', function() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Close modal when clicking outside the image
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                modal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    });
+</script>
+
+<?php include 'footer.php'; ?>
+</body>
+</html>

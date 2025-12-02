@@ -1,0 +1,1129 @@
+<?php 
+$pageTitle = "Katalog Produk - PT CNC Indonesia";
+include 'header.php'; 
+?>
+
+<style>
+    .container{
+        margin:20px;
+    }
+    /* Katalog Styles */
+    .catalog-hero {
+        background: linear-gradient(135deg, var(--primary) 0%, #0f1f3a 100%);
+        color: white;
+        padding: 5rem 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .catalog-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%23ffffff" opacity="0.05"><polygon points="1000,0 1000,100 0,100"></polygon></svg>');
+        background-size: cover;
+    }
+
+    .catalog-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .catalog-hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #ffffff 0%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .catalog-hero p {
+        font-size: 1.4rem;
+        max-width: 600px;
+        margin: 0 auto;
+        color: #e2e8f0;
+        line-height: 1.7;
+        font-weight: 300;
+    }
+
+    /* Category Filter - TIDAK STICKY */
+    .category-filter {
+        background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        padding: 2rem 0;
+        border-bottom: 1px solid #e2e8f0;
+        position: relative;
+        z-index: 50;
+    }
+
+    .filter-container {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .filter-btn {
+        background: white;
+        border: 2px solid #e2e8f0;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        font-weight: 600;
+        color: var(--dark);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .filter-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--secondary), var(--gold));
+        transition: all 0.4s ease;
+        z-index: -1;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        color: white;
+        border-color: transparent;
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 10px 25px rgba(45, 116, 218, 0.3);
+    }
+
+    .filter-btn.active::before,
+    .filter-btn:hover::before {
+        left: 0;
+    }
+
+    /* Products Grid - 4 CARD PER BARIS */
+    .products-catalog {
+        background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+        position: relative;
+    }
+
+    .products-catalog::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%231a365d" opacity="0.02"><polygon points="0,100 1000,0 1000,100"></polygon></svg>');
+        background-size: cover;
+    }
+
+    .catalog-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr); /* 4 card per baris */
+        gap: 2rem;
+        margin-top: 3rem;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Ukuran card tetap - tidak melebar */
+    .catalog-item {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        width: 100%; /* Ukuran tetap */
+        max-width: 100%; /* Tidak melebar */
+    }
+
+    .catalog-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(45, 116, 218, 0.03), rgba(212, 175, 55, 0.03));
+        opacity: 0;
+        transition: all 0.4s ease;
+        z-index: 1;
+    }
+
+    .catalog-item:hover::before {
+        opacity: 1;
+    }
+
+    .catalog-item:hover {
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Ukuran gambar tetap */
+    .catalog-image {
+        height: 220px; /* Ukuran tetap */
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+    }
+
+    .catalog-image::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60%;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.1));
+        z-index: 1;
+    }
+
+    .catalog-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: all 0.6s ease;
+    }
+
+    .catalog-item:hover .catalog-image img {
+        transform: scale(1.1) rotate(1deg);
+    }
+
+    .catalog-category {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        z-index: 2;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .catalog-content {
+        padding: 1.5rem;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+        height: 140px; /* Tinggi tetap untuk konsistensi */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .catalog-content h3 {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary), var(--dark));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .catalog-model {
+        color: var(--secondary);
+        font-weight: 600;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .catalog-model::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 30px;
+        height: 2px;
+        background: linear-gradient(to right, var(--secondary), var(--gold));
+        border-radius: 2px;
+    }
+
+    .catalog-actions {
+        display: flex;
+        justify-content: center;
+        margin-top: auto;
+    }
+
+    .btn-small {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border-radius: 25px;
+        background: linear-gradient(135deg, var(--secondary), var(--gold));
+        color: white;
+        text-decoration: none;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 5px 15px rgba(45, 116, 218, 0.3);
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        text-align: center;
+        min-width: 140px;
+    }
+
+    .btn-small::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, var(--gold), var(--secondary));
+        transition: all 0.4s ease;
+        z-index: -1;
+    }
+
+    .btn-small:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 8px 20px rgba(45, 116, 218, 0.4);
+    }
+
+    .btn-small:hover::before {
+        left: 0;
+    }
+
+    /* CTA Section */
+    .catalog-cta {
+        background: linear-gradient(135deg, var(--primary) 0%, #0f1f3a 100%);
+        color: white;
+        padding: 6rem 0;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .catalog-cta::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%23ffffff" opacity="0.05"><polygon points="0,0 1000,100 0,100"></polygon></svg>');
+        background-size: cover;
+    }
+
+    .catalog-cta-content {
+        position: relative;
+        z-index: 2;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .catalog-cta h2 {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #ffffff 0%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .catalog-cta p {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        color: #e2e8f0;
+        line-height: 1.6;
+        font-weight: 300;
+    }
+
+    /* CTA Section - SUPER ENHANCED */
+.catalog-cta {
+    background: linear-gradient(135deg, var(--primary) 0%, #0f1f3a 100%);
+    color: white;
+    padding: 8rem 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+}
+
+.catalog-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%23ffffff" opacity="0.03"><polygon points="0,0 1000,100 0,100"></polygon></svg>');
+    background-size: cover;
+}
+
+.catalog-cta-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.catalog-cta h2 {
+    font-size: 3.2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 0%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    line-height: 1.2;
+}
+
+.catalog-cta p {
+    font-size: 1.4rem;
+    margin-bottom: 3rem;
+    color: #e2e8f0;
+    line-height: 1.7;
+    font-weight: 300;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* CTA Buttons - ENHANCED */
+.cta-buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 4rem;
+}
+
+.btn-cta {
+    padding: 1.3rem 2.8rem;
+    border-radius: 50px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.1rem;
+    position: relative;
+    overflow: hidden;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    justify-content: center;
+    min-width: 220px;
+}
+
+.btn-cta-primary {
+    background: linear-gradient(135deg, var(--secondary), var(--gold));
+    color: white;
+    box-shadow: 0 10px 30px rgba(45, 116, 218, 0.4);
+}
+
+.btn-cta-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--gold), var(--secondary));
+    transition: all 0.4s ease;
+    z-index: -1;
+}
+
+.btn-cta-primary:hover::before {
+    left: 0;
+}
+
+.btn-cta-outline {
+    background: transparent;
+    border: 2px solid var(--gold);
+    color: var(--gold);
+    box-shadow: 0 5px 20px rgba(212, 175, 55, 0.2);
+}
+
+.btn-cta-outline:hover {
+    background: var(--gold);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(212, 175, 55, 0.4);
+}
+
+.btn-cta-secondary {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: white;
+    box-shadow: 0 10px 30px rgba(72, 187, 120, 0.4);
+}
+
+.btn-cta-secondary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #38a169, #48bb78);
+    transition: all 0.4s ease;
+    z-index: -1;
+}
+
+.btn-cta-secondary:hover::before {
+    left: 0;
+}
+
+.btn-cta:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+/* CTA Features */
+.cta-features {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: #e2e8f0;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    color: var(--gold);
+    transform: translateY(-2px);
+}
+
+.feature-item i {
+    font-size: 1.2rem;
+    color: var(--gold);
+}
+
+/* Floating Elements for CTA */
+.cta-floating-element {
+    position: absolute;
+    background: linear-gradient(135deg, var(--secondary), var(--gold));
+    border-radius: 50%;
+    opacity: 0.1;
+    animation: cta-float 8s ease-in-out infinite;
+    z-index: 1;
+}
+
+.cta-float-1 {
+    width: 120px;
+    height: 120px;
+    top: 10%;
+    left: 5%;
+    animation-delay: 0s;
+}
+
+.cta-float-2 {
+    width: 80px;
+    height: 80px;
+    bottom: 20%;
+    right: 8%;
+    animation-delay: 2s;
+}
+
+.cta-float-3 {
+    width: 60px;
+    height: 60px;
+    top: 60%;
+    left: 10%;
+    animation-delay: 4s;
+}
+
+@keyframes cta-float {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg) scale(1);
+    }
+    33% {
+        transform: translateY(-20px) rotate(120deg) scale(1.1);
+    }
+    66% {
+        transform: translateY(10px) rotate(240deg) scale(0.9);
+    }
+}
+
+/* Pulse Animation for Primary Button */
+@keyframes pulse-glow {
+    0% {
+        box-shadow: 0 10px 30px rgba(45, 116, 218, 0.4);
+    }
+    50% {
+        box-shadow: 0 10px 40px rgba(45, 116, 218, 0.8);
+    }
+    100% {
+        box-shadow: 0 10px 30px rgba(45, 116, 218, 0.4);
+    }
+}
+
+.btn-cta-primary {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Responsive Design for CTA */
+@media (max-width: 768px) {
+    .catalog-cta {
+        padding: 6rem 0;
+    }
+    
+    .catalog-cta h2 {
+        font-size: 2.3rem;
+    }
+    
+    .catalog-cta p {
+        font-size: 1.2rem;
+        margin-bottom: 2.5rem;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 3rem;
+    }
+    
+    .btn-cta {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+        padding: 1.2rem 2rem;
+    }
+    
+    .cta-features {
+        gap: 2rem;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .feature-item {
+        font-size: 0.9rem;
+    }
+    
+    .cta-floating-element {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .catalog-cta {
+        padding: 5rem 0;
+    }
+    
+    .catalog-cta h2 {
+        font-size: 2rem;
+    }
+    
+    .catalog-cta p {
+        font-size: 1.1rem;
+    }
+    
+    .btn-cta {
+        min-width: auto;
+        padding: 1.1rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .cta-features {
+        gap: 1.5rem;
+    }
+}
+
+/* Hover Effects Enhancement */
+.btn-cta:hover i {
+    transform: scale(1.2);
+    transition: transform 0.3s ease;
+}
+
+.btn-cta-primary:hover {
+    animation: none; /* Stop pulse animation on hover */
+    box-shadow: 0 15px 35px rgba(45, 116, 218, 0.6);
+}
+
+/* Loading state for buttons */
+.btn-cta.loading {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.btn-cta.loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+    .btn-outline {
+        background: transparent;
+        border: 2px solid var(--gold);
+        color: var(--gold);
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.4s ease;
+    }
+
+    .btn-outline:hover {
+        background: var(--gold);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+    }
+
+    /* Floating Elements */
+    .floating-element {
+        position: absolute;
+        background: linear-gradient(135deg, var(--secondary), var(--gold));
+        border-radius: 50%;
+        opacity: 0.1;
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .float-1 {
+        width: 80px;
+        height: 80px;
+        top: 10%;
+        left: 5%;
+        animation-delay: 0s;
+    }
+
+    .float-2 {
+        width: 120px;
+        height: 120px;
+        bottom: 20%;
+        right: 8%;
+        animation-delay: 2s;
+    }
+
+    .float-3 {
+        width: 60px;
+        height: 60px;
+        top: 60%;
+        left: 10%;
+        animation-delay: 4s;
+    }
+
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0px) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-15px) rotate(180deg);
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .catalog-grid {
+            grid-template-columns: repeat(3, 1fr); /* 3 card di tablet besar */
+            gap: 1.5rem;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .catalog-grid {
+            grid-template-columns: repeat(2, 1fr); /* 2 card di tablet */
+            gap: 1.5rem;
+        }
+        
+        .catalog-content {
+            height: 130px;
+        }
+        
+        .catalog-image {
+            height: 200px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .catalog-hero h1 {
+            font-size: 2.5rem;
+        }
+        
+        .catalog-hero p {
+            font-size: 1.2rem;
+        }
+        
+        .catalog-grid {
+            grid-template-columns: 1fr; /* 1 card di mobile */
+            gap: 1.5rem;
+        }
+        
+        .catalog-cta h2 {
+            font-size: 2rem;
+        }
+        
+        .cta-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .cta-buttons .btn {
+            width: 100%;
+            max-width: 280px;
+            text-align: center;
+        }
+        
+        .filter-btn {
+            padding: 0.8rem 1.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .category-filter {
+            padding: 2rem 0;
+        }
+        
+        .catalog-content {
+            height: auto;
+            min-height: 120px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .catalog-hero {
+            padding: 3rem 0;
+        }
+        
+        .products-catalog {
+            padding: 3rem 0;
+        }
+        
+        .catalog-cta {
+            padding: 4rem 0;
+        }
+        
+        .filter-container {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .filter-btn {
+            width: 100%;
+            max-width: 250px;
+            text-align: center;
+        }
+        
+        .catalog-image {
+            height: 180px;
+        }
+        
+        .category-filter {
+            padding: 1.5rem 0;
+        }
+        
+        .catalog-content h3 {
+            font-size: 1.1rem;
+        }
+    }
+
+    /* Memastikan card tidak melebar meskipun hanya ada 1 */
+    .catalog-grid:has(.catalog-item:only-child) {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .catalog-grid:has(.catalog-item:only-child) .catalog-item {
+        grid-column: 2 / 4; /* Pusatkan card jika hanya ada 1 */
+    }
+</style>
+
+<!-- Catalog Hero Section -->
+<section class="catalog-hero">
+    <div class="container">
+        <div class="catalog-hero-content">
+            <h1>Katalog Produk Kami</h1>
+            <p>Berbagai produk hasil inovasi kami untuk anda</p>
+        </div>
+    </div>
+    <div class="floating-element float-1"></div>
+    <div class="floating-element float-2"></div>
+    <div class="floating-element float-3"></div>
+</section>
+
+<!-- Category Filter - TIDAK STICKY -->
+<section class="category-filter">
+    <div class="container">
+        <div class="filter-container">
+            <button class="filter-btn active" data-category="all">Semua Produk</button>
+            <button class="filter-btn" data-category="laser">Fiber Laser Cutting</button>
+            <button class="filter-btn" data-category="plasma">Plasma Cutting</button>
+            <button class="filter-btn" data-category="router">CNC Router</button>
+            <button class="filter-btn" data-category="rotary">Rotary Cutting</button>
+            <button class="filter-btn" data-category="milling">Plano Milling</button>
+        </div>
+    </div>
+</section>
+
+<!-- Products Catalog -->
+<section class="products-catalog">
+    <div class="container">
+        
+        <div class="catalog-grid" id="productsGrid">
+            <!-- Product 1 - Fiber Laser Cutting -->
+            <div class="catalog-item" data-category="laser">
+                <div class="catalog-image">
+                    <img src="foto/cnc-cutting-fiber-laser-gen1a.JPG" alt="CNC Fiber Laser Cutting">
+                    <span class="catalog-category">Laser</span>
+                </div>
+                <div class="catalog-content">
+                    <h3>Mesin CNC Fiber Laser Cutting</h3>
+                    <div class="catalog-model">Model: FL-C1000 GEN 1</div>
+                    <div class="catalog-actions">
+                        <a href="product-detail.php?id=1" class="btn-small">Detail Produk</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 2 - Plasma Cutting -->
+            <div class="catalog-item" data-category="plasma">
+                <div class="catalog-image">
+                    <img src="foto/cnc-plasma-cutting-gen1a.JPG" alt="CNC Plasma Cutting">
+                    <span class="catalog-category">Plasma</span>
+                </div>
+                <div class="catalog-content">
+                    <h3>Mesin CNC Plasma Cutting</h3>
+                    <div class="catalog-model">Model: MQ-1325 GEN 1</div>
+                    <div class="catalog-actions">
+                        <a href="product-detail.php?id=2" class="btn-small">Detail Produk</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 3 - CNC Router -->
+            <div class="catalog-item" data-category="router">
+                <div class="catalog-image">
+                    <img src="foto/cnc-router-R-1325.JPG" alt="Precision Plasma" alt="3D CNC Router">
+                    <span class="catalog-category">Router</span>
+                </div>
+                <div class="catalog-content">
+                    <h3>Mesin CNC Router</h3>
+                    <div class="catalog-model">Model: R-1325</div>
+                    <div class="catalog-actions">
+                        <a href="product-detail.php?id=3" class="btn-small">Detail Produk</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 4 - Rotary Cutting -->
+            <div class="catalog-item" data-category="rotary">
+                <div class="catalog-image">
+                    <img src="foto/cnc-router-R-1325.JPG" alt="CNC Rotary Cutting">
+                    <span class="catalog-category">Rotary</span>
+                </div>
+                <div class="catalog-content">
+                    <h3>Mesin CNC Rotary Cutting</h3>
+                    <div class="catalog-model">Model: RC-2500</div>
+                    <div class="catalog-actions">
+                        <a href="product-detail.php?id=4" class="btn-small">Detail Produk</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 5 - Plano Milling -->
+            <div class="catalog-item" data-category="milling">
+                <div class="catalog-image">
+                    <img src="foto/cnc-rotary-plasma-cutting.JPG" alt="Precision Plasma" alt="CNC Plano Milling">
+                    <span class="catalog-category">Milling</span>
+                </div>
+                <div class="catalog-content">
+                    <h3>Mesin CNC Plano Milling</h3>
+                    <div class="catalog-model">Model: PM-3000</div>
+                    <div class="catalog-actions">
+                        <a href="product-detail.php?id=5" class="btn-small">Detail Produk</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 6 - High Power Laser -->
+            <div class="catalog-item" data-category="laser">
+                <div class="catalog-image">
+                    <img src="foto/ptpioneercncindonesia-cnc-cutting-fiber-laser-gen2a.JPG" alt="High Power Laser">
+                    <span class="catalog-category">Laser</span>
+                </div>
+                <div class="catalog-content">
+                    <h3>Mesin CNC Fiber Laser Cutting</h3>
+                    <div class="catalog-model">Model: FL-C1500 GEN 2</div>
+                    <div class="catalog-actions">
+                        <a href="product-detail.php?id=6" class="btn-small">Detail Produk</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 7 - Precision Plasma -->
+            <div class="catalog-item" data-category="plasma">
+                <div class="catalog-image">
+                    <img src="foto/ptpioneercncindonesia-cnc-plasma-cutting-gen2a.JPG" alt="Precision Plasma">
+                    <span class="catalog-category">Plasma</span>
+                </div>
+                <div class="catalog-content">
+                    <h3>Mesin CNC Fiber Laser Cutting</h3>
+
+                    <div class="catalog-model">Model: MQ-1325 GEN 2</div>
+                    <div class="catalog-actions">
+                        <a href="product-detail.php?id=7" class="btn-small">Detail Produk</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 8 - 3D Router -->
+            <div class="catalog-item" data-category="router">
+                <div class="catalog-image">
+                    <img src="foto/ptpioneercncindonesia-cnc-plasma-cutting-gen2a.JPG" alt="Precision Plasma" alt="3D CNC Router">
+                    <span class="catalog-category">Router</span>
+                </div>
+                <div class="catalog-content">
+                    <h3>CNC ROUTER ATC MULTISPINDLE</h3>
+                    <div class="catalog-model">Model: R-3MS ATC</div>
+                    <div class="catalog-actions">
+                        <a href="product-detail.php?id=8" class="btn-small">Detail Produk</a>
+                    </div>
+                </div>
+            </div>
+            <div class="catalog-item" data-category="router">
+                <div class="catalog-image">
+                    <img src="foto/cnc-router-R-1325.JPG" alt="Precision Plasma" alt="3D CNC Router">
+                    <span class="catalog-category">Router</span>
+                </div>
+                <div class="catalog-content">
+                    <h3>CNC ROUTER ATC</h3>
+                    <div class="catalog-model">Model: R-ATC 10T</div>
+                    <div class="catalog-actions">
+                        <a href="product-detail.php?id=8" class="btn-small">Detail Produk</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="catalog-cta">
+    <div class="catalog-cta-content">
+        <h2>Siap Transformasi Bisnis Anda?</h2>
+        <p>Dapatkan konsultasi gratis dari ahli kami dan temukan solusi mesin CNC yang tepat untuk kebutuhan produksi Anda</p>
+        <div class="cta-buttons">
+    
+            <a href="brochure.pdf" class="btn-cta btn-cta-outline">
+                <i class="fas fa-download"></i> Download Katalog Lengkap
+            </a>
+            <a href="tel:+622112345678" class="btn-cta btn-cta-secondary">
+                <i class="fas fa-phone"></i> Hubungi Sekarang
+            </a>
+        </div>
+        <div class="cta-features">
+            <div class="feature-item">
+                <i class="fas fa-clock"></i>
+                <span>Respons Cepat 24/7</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-user-tie"></i>
+                <span>Konsultasi Gratis</span>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-shield-alt"></i>
+                <span>Garansi Resmi</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Background Elements -->
+    <div class="cta-floating-element cta-float-1"></div>
+    <div class="cta-floating-element cta-float-2"></div>
+    <div class="cta-floating-element cta-float-3"></div>
+</section>
+
+<script>
+    // Enhanced Category Filter Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const catalogItems = document.querySelectorAll('.catalog-item');
+        
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                filterBtns.forEach(b => b.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                const category = this.getAttribute('data-category');
+                
+                // Filter items with enhanced animation
+                catalogItems.forEach((item, index) => {
+                    if (category === 'all' || item.getAttribute('data-category') === category) {
+                        setTimeout(() => {
+                            item.style.display = 'block';
+                            setTimeout(() => {
+                                item.style.opacity = '1';
+                                item.style.transform = 'translateY(0) scale(1)';
+                            }, 50);
+                        }, index * 100);
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateY(20px) scale(0.9)';
+                        setTimeout(() => {
+                            item.style.display = 'none';
+                        }, 400);
+                    }
+                });
+            });
+        });
+
+        // Enhanced scroll animation
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0) scale(1)';
+                    }, 200);
+                }
+            });
+        }, observerOptions);
+
+        // Observe catalog items
+        document.querySelectorAll('.catalog-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px) scale(0.95)';
+            el.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            observer.observe(el);
+        });
+    });
+</script>
+
+
+<?php include 'footer.php'; ?>
+</body>
+</html>
